@@ -1,4 +1,5 @@
 
+
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -65,7 +66,7 @@ const Navigation = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
             <div className="flex justify-between items-center h-full">
               <div className="flex items-center gap-8 flex-shrink-0 h-full">
-                {/* Logo with smooth animations */}
+                {/* Logo with smooth animations and heartbeat */}
                 <Link 
                   to="/" 
                   className="flex items-center gap-2 py-2 flex-shrink-0 group transition-all duration-300 ease-in-out hover:scale-105 transform"
@@ -74,8 +75,11 @@ const Navigation = () => {
                     <img
                       src="/images/realstate-removebg-preview.png"
                       alt="Real Estate Crafters Logo"
-                      className="h-10 sm:h-16 md:h-20 lg:h-20 w-auto object-contain transition-all duration-500 ease-in-out group-hover:scale-110 group-hover:rotate-3 transform"
-                      style={{ maxWidth: "150px" }}
+                      className="h-10 sm:h-16 md:h-20 lg:h-20 w-auto object-contain transition-all duration-500 ease-in-out group-hover:scale-110 group-hover:rotate-3 transform animate-pulse"
+                      style={{ 
+                        maxWidth: "150px",
+                        animation: "heartbeat 2s ease-in-out infinite"
+                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out opacity-0 group-hover:opacity-100"></div>
                   </div>
@@ -165,8 +169,30 @@ const Navigation = () => {
           </div>
         )}
       </header>
+
+      {/* Add custom heartbeat animation styles */}
+      <style jsx>{`
+        @keyframes heartbeat {
+          0% {
+            transform: scale(1);
+          }
+          14% {
+            transform: scale(1.05);
+          }
+          28% {
+            transform: scale(1);
+          }
+          42% {
+            transform: scale(1.05);
+          }
+          70% {
+            transform: scale(1);
+          }
+        }
+      `}</style>
     </>
   );
 };
 
 export default Navigation;
+
