@@ -26,8 +26,8 @@ const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClose }) =>
         title: 'Success',
         description: 'Admin login successful!'
       });
-      onClose();
-      navigate('/admin');
+      onClose(); // Close the modal first
+      navigate('/admin'); // Then navigate to admin
     } catch (error) {
       toast({
         title: 'Error',
