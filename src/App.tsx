@@ -22,6 +22,7 @@ import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
+import AdminGlobalAccess from "./components/admin/AdminGlobalAccess";
 
 const queryClient = new QueryClient();
 
@@ -34,8 +35,9 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              <AdminGlobalAccess />
               <Routes>
-                {/* Admin Routes - Completely separate from main site */}
+                {/* Admin Routes - Separate from main site */}
                 <Route path="/admin/*" element={<AdminRouter />} />
                 
                 {/* Main Website Routes with Layout */}

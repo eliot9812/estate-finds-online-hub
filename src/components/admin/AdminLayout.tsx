@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
@@ -13,9 +13,9 @@ import {
   MessageSquare,
   LogOut,
   Menu,
-  X
+  X,
+  Shield
 } from 'lucide-react';
-import { useState } from 'react';
 
 const AdminLayout: React.FC = () => {
   const { user, logout } = useAuth();
@@ -28,13 +28,13 @@ const AdminLayout: React.FC = () => {
   };
 
   const navItems = [
-    { path: '/admin', icon: LayoutDashboard, label: 'Overview', exact: true },
+    { path: '/admin', icon: LayoutDashboard, label: 'Dashboard', exact: true },
     { path: '/admin/issues', icon: AlertTriangle, label: 'Civic Issues' },
     { path: '/admin/documents', icon: FileText, label: 'Documents' },
     { path: '/admin/news', icon: Newspaper, label: 'News & Notices' },
     { path: '/admin/applications', icon: ClipboardList, label: 'Applications' },
-    { path: '/admin/taxes', icon: CreditCard, label: 'Tax Management' },
-    { path: '/admin/users', icon: Users, label: 'User Management' },
+    { path: '/admin/taxes', icon: CreditCard, label: 'Tax Records' },
+    { path: '/admin/users', icon: Users, label: 'Citizens' },
     { path: '/admin/complaints', icon: MessageSquare, label: 'Complaints' },
   ];
 
@@ -56,11 +56,14 @@ const AdminLayout: React.FC = () => {
       `}>
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b">
-            <h2 className="text-xl font-bold text-municipal-blue">Admin Panel</h2>
+          <div className="flex items-center justify-between p-4 border-b bg-municipal-blue">
+            <div className="flex items-center gap-2">
+              <Shield className="h-6 w-6 text-white" />
+              <h2 className="text-lg font-bold text-white">Admin Panel</h2>
+            </div>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-2 hover:bg-gray-100 rounded-md"
+              className="lg:hidden p-1 hover:bg-municipal-blue-dark rounded text-white"
             >
               <X className="h-5 w-5" />
             </button>
@@ -74,17 +77,17 @@ const AdminLayout: React.FC = () => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
+          <nav className="flex-1 p-4 space-y-1">
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
                 end={item.exact}
                 className={({ isActive }) => `
-                  flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors
+                  flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200
                   ${isActive 
-                    ? 'bg-municipal-blue text-white' 
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-municipal-blue text-white shadow-sm' 
+                    : 'text-gray-700 hover:bg-municipal-blue-light/20 hover:text-municipal-blue'
                   }
                 `}
                 onClick={() => setSidebarOpen(false)}
@@ -102,7 +105,7 @@ const AdminLayout: React.FC = () => {
               className="flex items-center gap-3 w-full px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors"
             >
               <LogOut className="h-5 w-5" />
-              Logout
+              Sign Out
             </button>
           </div>
         </div>
@@ -119,12 +122,12 @@ const AdminLayout: React.FC = () => {
             >
               <Menu className="h-5 w-5" />
             </button>
-            <h1 className="text-2xl font-bold text-municipal-blue">Municipality Administration</h1>
+            <h1 className="text-xl font-semibold text-gray-900">Municipality Administration</h1>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 overflow-auto">
           <Outlet />
         </main>
       </div>

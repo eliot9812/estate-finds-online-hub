@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Check for specific admin credentials
+    // Check for admin credentials
     if (email === 'admin' && password === 'admin123') {
       const adminUser: User = { 
         id: '1', 
@@ -61,18 +61,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
     
-    // Mock user data based on email for other users
-    let mockUser: User;
-    if (email.includes('admin')) {
-      mockUser = { id: '1', name: 'Admin User', email, role: 'admin' };
-    } else if (email.includes('engineer')) {
-      mockUser = { id: '2', name: 'Engineer User', email, role: 'engineer' };
-    } else {
-      mockUser = { id: '3', name: 'Citizen User', email, role: 'citizen' };
-    }
+    // Mock user data for regular users
+    const mockUser: User = { 
+      id: '2', 
+      name: 'Citizen User', 
+      email, 
+      role: 'citizen' 
+    };
     
     setUser(mockUser);
-    localStorage.setItem('auth_token', 'mock_token');
+    localStorage.setItem('auth_token', 'user_token');
     localStorage.setItem('user_data', JSON.stringify(mockUser));
     setIsLoading(false);
   };

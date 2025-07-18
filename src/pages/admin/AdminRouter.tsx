@@ -3,7 +3,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import AdminLayout from '@/components/admin/AdminLayout';
-import AdminOverview from '@/components/admin/AdminOverview';
+import AdminDashboard from '@/components/admin/AdminDashboard';
 import IssueManagement from '@/components/admin/IssueManagement';
 import DocumentManagement from '@/components/admin/DocumentManagement';
 import NewsManagement from '@/components/admin/NewsManagement';
@@ -15,15 +15,15 @@ import ComplaintManagement from '@/components/admin/ComplaintManagement';
 const AdminRouter: React.FC = () => {
   const { user } = useAuth();
 
-  // Check if user has admin or engineer role
-  if (!user || (user.role !== 'admin' && user.role !== 'engineer')) {
+  // Check if user has admin role
+  if (!user || user.role !== 'admin') {
     return <Navigate to="/" replace />;
   }
 
   return (
     <Routes>
       <Route path="/" element={<AdminLayout />}>
-        <Route index element={<AdminOverview />} />
+        <Route index element={<AdminDashboard />} />
         <Route path="issues" element={<IssueManagement />} />
         <Route path="documents" element={<DocumentManagement />} />
         <Route path="news" element={<NewsManagement />} />
