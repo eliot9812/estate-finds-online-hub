@@ -25,7 +25,8 @@ const Header: React.FC = () => {
 
   React.useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.shiftKey && e.altKey && e.key === 'A') {
+      // Alt + Shift + A for admin access
+      if (e.altKey && e.shiftKey && e.key === 'A') {
         e.preventDefault();
         setShowAdminLoginModal(true);
       }
