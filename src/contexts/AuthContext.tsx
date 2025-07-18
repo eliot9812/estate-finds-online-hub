@@ -45,7 +45,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Mock user data based on email
+    // Check for specific admin credentials
+    if (email === 'admin' && password === 'admin123') {
+      const adminUser: User = { 
+        id: '1', 
+        name: 'System Administrator', 
+        email: 'admin@municipality.gov', 
+        role: 'admin' 
+      };
+      
+      setUser(adminUser);
+      localStorage.setItem('auth_token', 'admin_token');
+      localStorage.setItem('user_data', JSON.stringify(adminUser));
+      setIsLoading(false);
+      return;
+    }
+    
+    // Mock user data based on email for other users
     let mockUser: User;
     if (email.includes('admin')) {
       mockUser = { id: '1', name: 'Admin User', email, role: 'admin' };

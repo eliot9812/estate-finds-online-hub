@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   AlertTriangle, 
@@ -8,7 +7,8 @@ import {
   TrendingUp,
   Clock,
   CheckCircle,
-  XCircle
+  XCircle,
+  Newspaper
 } from 'lucide-react';
 
 const AdminOverview: React.FC = () => {

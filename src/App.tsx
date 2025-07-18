@@ -35,10 +35,10 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <Routes>
-                {/* Admin Routes - No Layout wrapper */}
+                {/* Admin Routes - Completely separate from main site */}
                 <Route path="/admin/*" element={<AdminRouter />} />
                 
-                {/* Regular Routes with Layout */}
+                {/* Main Website Routes with Layout */}
                 <Route path="/*" element={
                   <Layout>
                     <Routes>

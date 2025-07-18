@@ -13,8 +13,8 @@ interface AdminLoginModalProps {
 const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
   const { login, isLoading } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin');
+  const [password, setPassword] = useState('admin123');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,12 +25,10 @@ const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClose }) =>
         description: 'Admin login successful!'
       });
       onClose();
-      setEmail('');
-      setPassword('');
     } catch (error) {
       toast({
         title: t('error'),
-        description: 'Login failed. Please try again.',
+        description: 'Login failed. Please check your credentials.',
         variant: 'destructive'
       });
     }
@@ -51,14 +49,14 @@ const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClose }) =>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Admin Email
+              Username
             </label>
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="municipal-input w-full"
-              placeholder="Enter admin email"
+              placeholder="Enter username"
               required
             />
           </div>
@@ -95,8 +93,11 @@ const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClose }) =>
           </div>
         </form>
 
-        <div className="mt-4 text-xs text-gray-500">
-          <p>Press Shift + Alt + A to access this login</p>
+        <div className="mt-4 p-3 bg-blue-50 rounded-md">
+          <p className="text-sm text-blue-800 font-medium mb-1">Default Credentials:</p>
+          <p className="text-xs text-blue-600">Username: admin</p>
+          <p className="text-xs text-blue-600">Password: admin123</p>
+          <p className="text-xs text-blue-500 mt-2">Press Alt + Shift + A to access this login</p>
         </div>
       </div>
     </div>
