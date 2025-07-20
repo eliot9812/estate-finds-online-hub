@@ -15,7 +15,8 @@ import {
   LogOut,
   Menu,
   X,
-  Shield
+  Shield,
+  Settings
 } from 'lucide-react';
 
 const AdminLayout: React.FC = () => {
@@ -38,6 +39,7 @@ const AdminLayout: React.FC = () => {
     { path: '/admin/taxes', icon: CreditCard, label: 'Tax Records' },
     { path: '/admin/users', icon: Users, label: 'Citizens' },
     { path: '/admin/complaints', icon: MessageSquare, label: 'Complaints' },
+    { path: '/admin/service-requests', icon: Settings, label: 'Service Requests' },
   ];
 
   return (

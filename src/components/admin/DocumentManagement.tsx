@@ -10,6 +10,7 @@ import {
   Search,
   Filter
 } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 interface Document {
   id: string;
@@ -27,8 +28,9 @@ const DocumentManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
 
-  const mockDocuments: Document[] = [
+  const [documents, setDocuments] = useState<Document[]>([
     {
       id: 'DOC-001',
       title: 'Citizenship Application Form',
@@ -62,17 +64,54 @@ const DocumentManagement: React.FC = () => {
       downloadCount: 234,
       isActive: false
     }
-  ];
+  ]);
 
   const categories = ['Forms', 'Guidelines', 'Tools', 'Reports', 'Policies'];
 
-  const filteredDocuments = mockDocuments.filter(doc => {
+  const filteredDocuments = documents.filter(doc => {
     const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          doc.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = categoryFilter === 'all' || doc.category === categoryFilter;
     
     return matchesSearch && matchesCategory;
   });
+
+  const handleDownload = (doc: Document) => {
+    toast({
+      title: 'Download Started',
+      description: `Downloading ${doc.title}...`
+    });
+    // Simulate download
+    setDocuments(prev => prev.map(d => 
+      d.id === doc.id ? { ...d, downloadCount: d.downloadCount + 1 } : d
+    ));
+  };
+
+  const handleEdit = (doc: Document) => {
+    setSelectedDocument(doc);
+    toast({
+      title: 'Edit Document',
+      description: `Opening edit form for ${doc.title}`
+    });
+  };
+
+  const handleDelete = (docId: string) => {
+    setDocuments(prev => prev.filter(d => d.id !== docId));
+    toast({
+      title: 'Document Deleted',
+      description: 'Document has been successfully deleted'
+    });
+  };
+
+  const handleToggleStatus = (docId: string) => {
+    setDocuments(prev => prev.map(d => 
+      d.id === docId ? { ...d, isActive: !d.isActive } : d
+    ));
+    toast({
+      title: 'Status Updated',
+      description: 'Document status has been updated'
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -133,11 +172,14 @@ const DocumentManagement: React.FC = () => {
                     <p className="text-sm text-gray-600">{doc.size}</p>
                   </div>
                 </div>
-                <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  doc.isActive ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
-                }`}>
+                <button
+                  onClick={() => handleToggleStatus(doc.id)}
+                  className={`px-2 py-1 rounded-full text-xs font-medium transition-colors ${
+                    doc.isActive ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-red-100 text-red-600 hover:bg-red-200'
+                  }`}
+                >
                   {doc.isActive ? 'Active' : 'Inactive'}
-                </div>
+                </button>
               </div>
 
               <h3 className="font-semibold text-gray-900 mb-2">{doc.title}</h3>
@@ -151,13 +193,25 @@ const DocumentManagement: React.FC = () => {
               <div className="flex items-center justify-between">
                 <span className="text-xs text-gray-500">Uploaded: {doc.uploadedAt}</span>
                 <div className="flex items-center gap-2">
-                  <button className="p-1 hover:bg-gray-100 rounded-md transition-colors" title="Download">
+                  <button 
+                    onClick={() => handleDownload(doc)}
+                    className="p-1 hover:bg-gray-100 rounded-md transition-colors" 
+                    title="Download"
+                  >
                     <Download className="h-4 w-4 text-gray-600" />
                   </button>
-                  <button className="p-1 hover:bg-gray-100 rounded-md transition-colors" title="Edit">
+                  <button 
+                    onClick={() => handleEdit(doc)}
+                    className="p-1 hover:bg-gray-100 rounded-md transition-colors" 
+                    title="Edit"
+                  >
                     <Edit className="h-4 w-4 text-gray-600" />
                   </button>
-                  <button className="p-1 hover:bg-gray-100 rounded-md transition-colors" title="Delete">
+                  <button 
+                    onClick={() => handleDelete(doc.id)}
+                    className="p-1 hover:bg-gray-100 rounded-md transition-colors" 
+                    title="Delete"
+                  >
                     <Trash2 className="h-4 w-4 text-red-600" />
                   </button>
                 </div>

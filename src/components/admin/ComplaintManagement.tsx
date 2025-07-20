@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Filter, Eye, MessageSquare, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Search, Filter, Eye, MessageSquare, Clock, CheckCircle, AlertTriangle, Trash2, BookOpen } from 'lucide-react';
 
 interface Complaint {
   id: string;
@@ -13,6 +13,7 @@ interface Complaint {
   priority: 'low' | 'medium' | 'high';
   assignedTo: string;
   responseCount: number;
+  isRead: boolean;
 }
 
 const ComplaintManagement: React.FC = () => {
@@ -21,7 +22,7 @@ const ComplaintManagement: React.FC = () => {
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
 
-  const mockComplaints: Complaint[] = [
+  const [complaints, setComplaints] = useState<Complaint[]>([
     {
       id: 'CMP-2024-001',
       subject: 'Poor Service at Municipal Office',
@@ -32,7 +33,8 @@ const ComplaintManagement: React.FC = () => {
       status: 'open',
       priority: 'medium',
       assignedTo: 'Admin User',
-      responseCount: 0
+      responseCount: 0,
+      isRead: false
     },
     {
       id: 'CMP-2024-002',
@@ -44,7 +46,8 @@ const ComplaintManagement: React.FC = () => {
       status: 'in-review',
       priority: 'high',
       assignedTo: 'Engineer User',
-      responseCount: 2
+      responseCount: 2,
+      isRead: true
     },
     {
       id: 'CMP-2024-003',
@@ -56,9 +59,10 @@ const ComplaintManagement: React.FC = () => {
       status: 'resolved',
       priority: 'high',
       assignedTo: 'Admin User',
-      responseCount: 3
+      responseCount: 3,
+      isRead: true
     }
-  ];
+  ]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -79,7 +83,7 @@ const ComplaintManagement: React.FC = () => {
     }
   };
 
-  const filteredComplaints = mockComplaints.filter(complaint => {
+  const filteredComplaints = complaints.filter(complaint => {
     const matchesSearch = complaint.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          complaint.submittedBy.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          complaint.id.toLowerCase().includes(searchTerm.toLowerCase());
@@ -90,7 +94,26 @@ const ComplaintManagement: React.FC = () => {
   });
 
   const handleStatusChange = (complaintId: string, newStatus: string) => {
-    console.log(`Updating complaint ${complaintId} to status: ${newStatus}`);
+    setComplaints(prev => prev.map(complaint => 
+      complaint.id === complaintId 
+        ? { ...complaint, status: newStatus as Complaint['status'] }
+        : complaint
+    ));
+    console.log(`Updated complaint ${complaintId} to status: ${newStatus}`);
+  };
+
+  const handleMarkAsRead = (complaintId: string) => {
+    setComplaints(prev => prev.map(complaint => 
+      complaint.id === complaintId 
+        ? { ...complaint, isRead: true }
+        : complaint
+    ));
+    console.log(`Marked complaint ${complaintId} as read`);
+  };
+
+  const handleDeleteComplaint = (complaintId: string) => {
+    setComplaints(prev => prev.filter(complaint => complaint.id !== complaintId));
+    console.log(`Deleted complaint ${complaintId}`);
   };
 
   return (
@@ -109,7 +132,7 @@ const ComplaintManagement: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Open Complaints</p>
-              <p className="text-2xl font-bold text-yellow-600">{mockComplaints.filter(c => c.status === 'open').length}</p>
+              <p className="text-2xl font-bold text-yellow-600">{complaints.filter(c => c.status === 'open').length}</p>
             </div>
             <div className="p-3 bg-yellow-100 rounded-lg">
               <AlertTriangle className="h-6 w-6 text-yellow-600" />
@@ -121,7 +144,7 @@ const ComplaintManagement: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">In Review</p>
-              <p className="text-2xl font-bold text-blue-600">{mockComplaints.filter(c => c.status === 'in-review').length}</p>
+              <p className="text-2xl font-bold text-blue-600">{complaints.filter(c => c.status === 'in-review').length}</p>
             </div>
             <div className="p-3 bg-blue-100 rounded-lg">
               <Clock className="h-6 w-6 text-blue-600" />
@@ -133,7 +156,7 @@ const ComplaintManagement: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Resolved</p>
-              <p className="text-2xl font-bold text-green-600">{mockComplaints.filter(c => c.status === 'resolved').length}</p>
+              <p className="text-2xl font-bold text-green-600">{complaints.filter(c => c.status === 'resolved').length}</p>
             </div>
             <div className="p-3 bg-green-100 rounded-lg">
               <CheckCircle className="h-6 w-6 text-green-600" />
@@ -145,7 +168,7 @@ const ComplaintManagement: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">High Priority</p>
-              <p className="text-2xl font-bold text-red-600">{mockComplaints.filter(c => c.priority === 'high').length}</p>
+              <p className="text-2xl font-bold text-red-600">{complaints.filter(c => c.priority === 'high').length}</p>
             </div>
             <div className="p-3 bg-red-100 rounded-lg">
               <AlertTriangle className="h-6 w-6 text-red-600" />
@@ -211,8 +234,15 @@ const ComplaintManagement: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {filteredComplaints.map((complaint) => (
-                <tr key={complaint.id} className="hover:bg-gray-50">
-                  <td className="py-3 px-4 font-medium text-municipal-blue">{complaint.id}</td>
+                <tr key={complaint.id} className={`hover:bg-gray-50 ${!complaint.isRead ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}>
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-municipal-blue">{complaint.id}</span>
+                      {!complaint.isRead && (
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      )}
+                    </div>
+                  </td>
                   <td className="py-3 px-4">
                     <div className="max-w-xs">
                       <p className="font-medium truncate">{complaint.subject}</p>
@@ -245,13 +275,31 @@ const ComplaintManagement: React.FC = () => {
                     </div>
                   </td>
                   <td className="py-3 px-4">
-                    <button
-                      onClick={() => setSelectedComplaint(complaint)}
-                      className="p-1 hover:bg-gray-100 rounded-md transition-colors"
-                      title="View Details"
-                    >
-                      <Eye className="h-4 w-4 text-gray-600" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setSelectedComplaint(complaint)}
+                        className="p-1 hover:bg-gray-100 rounded-md transition-colors"
+                        title="View Details"
+                      >
+                        <Eye className="h-4 w-4 text-gray-600" />
+                      </button>
+                      {!complaint.isRead && (
+                        <button
+                          onClick={() => handleMarkAsRead(complaint.id)}
+                          className="p-1 hover:bg-blue-100 rounded-md transition-colors"
+                          title="Mark as Read"
+                        >
+                          <BookOpen className="h-4 w-4 text-blue-600" />
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDeleteComplaint(complaint.id)}
+                        className="p-1 hover:bg-red-100 rounded-md transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 className="h-4 w-4 text-red-600" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Search, Filter, Eye, CheckCircle, XCircle, Clock, FileText } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 interface Application {
   id: string;
@@ -16,8 +17,9 @@ const ApplicationManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
 
-  const mockApplications: Application[] = [
+  const [applications, setApplications] = useState<Application[]>([
     {
       id: 'APP-2024-001',
       type: 'Citizenship Certificate',
@@ -45,7 +47,7 @@ const ApplicationManagement: React.FC = () => {
       documents: 7,
       priority: 'normal'
     }
-  ];
+  ]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -57,7 +59,7 @@ const ApplicationManagement: React.FC = () => {
     }
   };
 
-  const filteredApplications = mockApplications.filter(app => {
+  const filteredApplications = applications.filter(app => {
     const matchesSearch = app.applicantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          app.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          app.id.toLowerCase().includes(searchTerm.toLowerCase());
@@ -66,6 +68,30 @@ const ApplicationManagement: React.FC = () => {
     
     return matchesSearch && matchesStatus && matchesType;
   });
+
+  const handleApprove = (applicationId: string) => {
+    setApplications(prev => prev.map(app => 
+      app.id === applicationId ? { ...app, status: 'approved' } : app
+    ));
+    toast({
+      title: 'Application Approved',
+      description: `Application ${applicationId} has been approved`
+    });
+  };
+
+  const handleReject = (applicationId: string) => {
+    setApplications(prev => prev.map(app => 
+      app.id === applicationId ? { ...app, status: 'rejected' } : app
+    ));
+    toast({
+      title: 'Application Rejected',
+      description: `Application ${applicationId} has been rejected`
+    });
+  };
+
+  const handleViewDetails = (application: Application) => {
+    setSelectedApplication(application);
+  };
 
   return (
     <div className="space-y-6">
@@ -158,13 +184,27 @@ const ApplicationManagement: React.FC = () => {
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
-                      <button className="p-1 hover:bg-gray-100 rounded-md transition-colors" title="View Details">
+                      <button 
+                        onClick={() => handleViewDetails(app)}
+                        className="p-1 hover:bg-gray-100 rounded-md transition-colors" 
+                        title="View Details"
+                      >
                         <Eye className="h-4 w-4 text-gray-600" />
                       </button>
-                      <button className="p-1 hover:bg-green-100 rounded-md transition-colors" title="Approve">
+                      <button 
+                        onClick={() => handleApprove(app.id)}
+                        className="p-1 hover:bg-green-100 rounded-md transition-colors" 
+                        title="Approve"
+                        disabled={app.status === 'approved' || app.status === 'rejected'}
+                      >
                         <CheckCircle className="h-4 w-4 text-green-600" />
                       </button>
-                      <button className="p-1 hover:bg-red-100 rounded-md transition-colors" title="Reject">
+                      <button 
+                        onClick={() => handleReject(app.id)}
+                        className="p-1 hover:bg-red-100 rounded-md transition-colors" 
+                        title="Reject"
+                        disabled={app.status === 'approved' || app.status === 'rejected'}
+                      >
                         <XCircle className="h-4 w-4 text-red-600" />
                       </button>
                     </div>
@@ -175,6 +215,107 @@ const ApplicationManagement: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Application Details Modal */}
+      {selectedApplication && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b flex justify-between items-center">
+              <h3 className="text-xl font-bold">Application Details</h3>
+              <button
+                onClick={() => setSelectedApplication(null)}
+                className="p-2 hover:bg-gray-100 rounded-md"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Application ID</label>
+                  <p className="text-municipal-blue font-medium">{selectedApplication.id}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Application Type</label>
+                  <p className="font-medium">{selectedApplication.type}</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Applicant Name</label>
+                  <p>{selectedApplication.applicantName}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Submitted At</label>
+                  <p>{selectedApplication.submittedAt}</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Priority</label>
+                  <p>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      selectedApplication.priority === 'urgent' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'
+                    }`}>
+                      {selectedApplication.priority.charAt(0).toUpperCase() + selectedApplication.priority.slice(1)}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Status</label>
+                  <p>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedApplication.status)}`}>
+                      {selectedApplication.status.charAt(0).toUpperCase() + selectedApplication.status.slice(1)}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Documents</label>
+                  <p className="flex items-center gap-1">
+                    <FileText className="h-4 w-4 text-gray-400" />
+                    {selectedApplication.documents} files
+                  </p>
+                </div>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-gray-700">Review Notes</label>
+                <textarea
+                  rows={4}
+                  className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-municipal-blue"
+                  placeholder="Add review notes for this application..."
+                />
+              </div>
+            </div>
+            
+            <div className="p-6 border-t bg-gray-50 flex justify-end gap-2">
+              <button
+                onClick={() => setSelectedApplication(null)}
+                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              >
+                Close
+              </button>
+              <button 
+                onClick={() => handleReject(selectedApplication.id)}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                disabled={selectedApplication.status === 'approved' || selectedApplication.status === 'rejected'}
+              >
+                Reject
+              </button>
+              <button 
+                onClick={() => handleApprove(selectedApplication.id)}
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                disabled={selectedApplication.status === 'approved' || selectedApplication.status === 'rejected'}
+              >
+                Approve
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
