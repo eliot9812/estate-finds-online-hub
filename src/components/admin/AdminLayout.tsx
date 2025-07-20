@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { 
@@ -22,8 +22,22 @@ import {
 const AdminLayout: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Auto-logout when backing from admin panel
+  useEffect(() => {
+    const handlePopState = () => {
+      if (!location.pathname.startsWith('/admin')) {
+        logout();
+        navigate('/');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [location.pathname, logout, navigate]);
 
   const handleLogout = () => {
     logout();

@@ -11,6 +11,7 @@ import {
   Megaphone,
   Clock
 } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 interface NewsItem {
   id: string;
@@ -31,7 +32,7 @@ const NewsManagement: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
 
-  const mockNews: NewsItem[] = [
+  const [newsItems, setNewsItems] = useState<NewsItem[]>([
     {
       id: 'NEWS-001',
       title: 'New Digital Tax Payment System Now Available',
@@ -65,7 +66,15 @@ const NewsManagement: React.FC = () => {
       views: 0,
       isUrgent: false
     }
-  ];
+  ]);
+
+  const handleDelete = (id: string) => {
+    setNewsItems(prev => prev.filter(item => item.id !== id));
+    toast({
+      title: 'News Deleted',
+      description: 'News item has been successfully deleted'
+    });
+  };
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -85,7 +94,7 @@ const NewsManagement: React.FC = () => {
     }
   };
 
-  const filteredNews = mockNews.filter(item => {
+  const filteredNews = newsItems.filter(item => {
     const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.content.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = typeFilter === 'all' || item.type === typeFilter;
@@ -149,14 +158,16 @@ const NewsManagement: React.FC = () => {
         </div>
       </div>
 
-      {/* News List */}
-      <div className="space-y-4">
+      {/* News Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredNews.map((item) => (
-          <div key={item.id} className="bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
+          <div key={item.id} className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow">
+            <div className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(item.type)}`}>
+                    {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+                  </span>
                   {item.isUrgent && (
                     <span className="px-2 py-1 bg-red-100 text-red-600 text-xs font-medium rounded-full flex items-center gap-1">
                       <Megaphone className="h-3 w-3" />
@@ -164,41 +175,49 @@ const NewsManagement: React.FC = () => {
                     </span>
                   )}
                 </div>
-                
-                <p className="text-gray-600 mb-4 line-clamp-2">{item.content}</p>
-                
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(item.type)}`}>
-                    {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-                  </span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>
-                    {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    {item.publishDate}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Eye className="h-4 w-4" />
-                    {item.views} views
-                  </div>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>
+                  {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                </span>
+              </div>
+
+              <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{item.title}</h3>
+              <p className="text-sm text-gray-600 mb-4 line-clamp-3">{item.content}</p>
+              
+              <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  {item.publishDate}
+                </div>
+                <div className="flex items-center gap-1">
+                  <Eye className="h-4 w-4" />
+                  {item.views}
                 </div>
               </div>
-              
-              <div className="flex items-center gap-2 ml-4">
-                <button 
-                  onClick={() => setSelectedNews(item)}
-                  className="p-2 hover:bg-gray-100 rounded-md transition-colors" 
-                  title="View"
-                >
-                  <Eye className="h-4 w-4 text-gray-600" />
-                </button>
-                <button className="p-2 hover:bg-gray-100 rounded-md transition-colors" title="Edit">
-                  <Edit className="h-4 w-4 text-gray-600" />
-                </button>
-                <button className="p-2 hover:bg-gray-100 rounded-md transition-colors" title="Delete">
-                  <Trash2 className="h-4 w-4 text-red-600" />
-                </button>
+
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-500">ID: {item.id}</span>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => setSelectedNews(item)}
+                    className="p-1 hover:bg-gray-100 rounded-md transition-colors" 
+                    title="View Details"
+                  >
+                    <Eye className="h-4 w-4 text-gray-600" />
+                  </button>
+                  <button 
+                    className="p-1 hover:bg-gray-100 rounded-md transition-colors" 
+                    title="Edit"
+                  >
+                    <Edit className="h-4 w-4 text-gray-600" />
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(item.id)}
+                    className="p-1 hover:bg-gray-100 rounded-md transition-colors" 
+                    title="Delete"
+                  >
+                    <Trash2 className="h-4 w-4 text-red-600" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
