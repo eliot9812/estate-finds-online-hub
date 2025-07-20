@@ -244,8 +244,8 @@ const IssueManagement: React.FC = () => {
         </div>
       </div>
 
-      {/* Issues List */}
-      <div className="space-y-4">
+      {/* Issues Grid */}
+      <div>
         {loading && (
           <div className="municipal-card text-center py-16">
             <p className="text-gray-500 text-xl mb-2">Loading issues...</p>
@@ -256,15 +256,19 @@ const IssueManagement: React.FC = () => {
             <p className="text-red-500 text-xl mb-2">{error}</p>
           </div>
         )}
-        {!loading && !error && filteredIssues.map((issue) => (
-          <IssueCard
-            key={issue.id}
-            issue={issue}
-            onStatusChange={handleStatusChange}
-            onViewDetails={handleViewDetails}
-            onDelete={handleDeleteIssue}
-          />
-        ))}
+        {!loading && !error && (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredIssues.map((issue) => (
+              <IssueCard
+                key={issue.id}
+                issue={issue}
+                onStatusChange={handleStatusChange}
+                onViewDetails={handleViewDetails}
+                onDelete={handleDeleteIssue}
+              />
+            ))}
+          </div>
+        )}
         {!loading && !error && filteredIssues.length === 0 && (
           <div className="municipal-card text-center py-16">
             <div className="text-gray-400 mb-6">

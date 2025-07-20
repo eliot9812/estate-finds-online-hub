@@ -119,14 +119,25 @@ const AdminLayout: React.FC = () => {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
         <header className="bg-white shadow-sm border-b px-2 sm:px-4 py-2 sm:py-3">
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="lg:hidden p-1 sm:p-2 hover:bg-gray-100 rounded-md"
+              >
+                <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
+              </button>
+              <h1 className="text-base sm:text-xl font-semibold text-gray-900 truncate">Municipality Administration</h1>
+            </div>
+            
+            {/* Top right logout button */}
             <button
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-1 sm:p-2 hover:bg-gray-100 rounded-md"
+              onClick={handleLogout}
+              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors"
             >
-              <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
+              <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Sign Out</span>
             </button>
-            <h1 className="text-base sm:text-xl font-semibold text-gray-900 truncate">Municipality Administration</h1>
           </div>
         </header>
 
