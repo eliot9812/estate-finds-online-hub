@@ -201,18 +201,6 @@ const PropertyDetail = () => {
                   <h3 className="text-xl font-semibold text-gray-800 mb-3">Description</h3>
                   <p className="text-gray-600 leading-relaxed">{property.description}</p>
                 </div>
-
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-3">Features</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {property.features.map((feature, index) => (
-                      <div key={index} className="flex items-center text-gray-600">
-                        <div className="w-2 h-2 bg-[#006d4e] rounded-full mr-3"></div>
-                        {feature}
-                      </div>
-                    ))}
-                  </div>
-                </div>
               </CardContent>
             </Card>
           </div>

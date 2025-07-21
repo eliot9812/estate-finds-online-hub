@@ -1,188 +1,336 @@
-import React from 'react';
-import mayorImage from "../images/mayor.jpg";
-import deputyMayorImage from '../images/deputy-mayor.jpg'; 
-import chiefExecutiveImage from '../images/chief-executive.jpg';
-type Leader = {
-  name: string;
-  post: string;
-  contact: string;
-  image: string; // will hold imported image
-};
- const leaders: Leader[] = [
-  {
-    name: 'आशुतोष उpu भट्टराई',
-    post: 'नगर प्रमुख',
-    contact: '9801234567',
-    image: mayorImage,
-  },
-  {
-    name: 'अर्जुन उpu दाहाल',
-    post: 'उप–प्रमुख',
-    contact: '9807654321',
-    image: deputyMayorImage,
-  },
-  {
-    name: 'प्रवेश जैC ओझा',
-    post: 'प्रमुख प्रशासकीय अधिकृत',
-    contact: '9812345678',
-    image: chiefExecutiveImage,
-  }
-];
-import { useTranslation } from 'react-i18next';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { MapPin, Users, Award, Target } from 'lucide-react';
 
-// Import your images here
-// Make sure these paths are correct relative to your project's public folder or assets directory
+import { useLanguage } from "@/contexts/LanguageContext";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Building2, MapPin, User, Award, Users, Briefcase, Star } from "lucide-react";
+import { useEffect, useState } from "react";
 
+const About = () => {
+  const { t } = useLanguage();
+  
+  // Animation states for statistics
+  const [experienceCount, setExperienceCount] = useState(0);
+  const [projectsCount, setProjectsCount] = useState(0);
+  const [clientsCount, setClientsCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
 
+  // Target values
+  const targetExperience = 15;
+  const targetProjects = 500;
+  const targetClients = 1200;
 
-const About: React.FC = () => {
-  const { t } = useTranslation();
-  const { currentLanguage } = useLanguage();
+  // Animation effect
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
 
-  const stats = [
-    { icon: Users, label: 'Population', value: '244,750', description: 'Total Citizens' },
-    { icon: MapPin, label: 'Area', value: '192.24', description: 'Square Kilometers' },
-    { icon: Award, label: 'Wards', value: '19', description: 'Administrative Divisions' },
-    { icon: Target, label: 'Services', value: '50+', description: 'Digital Services' }
+    const statsSection = document.getElementById('stats-section');
+    if (statsSection) {
+      observer.observe(statsSection);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const duration = 2000; // 2 seconds
+    const steps = 60;
+    const stepDuration = duration / steps;
+
+    let currentStep = 0;
+
+    const timer = setInterval(() => {
+      const progress = currentStep / steps;
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+
+      setExperienceCount(Math.round(targetExperience * easeOut));
+      setProjectsCount(Math.round(targetProjects * easeOut));
+      setClientsCount(Math.round(targetClients * easeOut));
+
+      currentStep++;
+
+      if (currentStep > steps) {
+        clearInterval(timer);
+      }
+    }, stepDuration);
+
+    return () => clearInterval(timer);
+  }, [isVisible]);
+
+  const branches = [
+    {
+      name: t("about.branches.branch1.name"),
+      location: t("about.branches.branch1.location"),
+      image: "/public/images/kathmandu.jpg"
+    },
+    {
+      name: t("about.branches.branch2.name"),
+      location: t("about.branches.branch2.location"),
+      image: "/public/images/pokhara.jpg"
+    },
+    {
+      name: t("about.branches.branch3.name"),
+      location: t("about.branches.branch3.location"),
+      image: "public/images/bardibas.jpg"
+    },
+    {
+      name: t("about.branches.branch4.name"),
+      location: t("about.branches.branch4.location"),
+      image: "public/images/janakpur.jpg"
+    }
   ];
-   const wardLeaders = [
-     { name: 'शंकर खड्का', ward: 1, contact: '९८०१००००१' },
-    { name: 'मनिषा थापा', ward: 2, contact: '९८०१००००२' },
-    { name: 'राजेन्द्र राई', ward: 3, contact: '९८०१००००३' },
-    { name: 'रेश्मा कार्की', ward: 4, contact: '९८०१००००४' },
-    { name: 'ध्रुव घिमिरे', ward: 5, contact: '९८०१००००५' },
-    { name: 'सुमन लामा', ward: 6, contact: '९८०१००००६' },
-    { name: 'हरिकला गुरुङ', ward: 7, contact: '९८०१००००७' },
-    { name: 'कमल बुढा', ward: 8, contact: '९८०१००००८' },
-    { name: 'सरिता बोहरा', ward: 9, contact: '९८०१००००९' },
-    { name: 'विनोद कार्की', ward: 10, contact: '९८०१०००१०' },
-    { name: 'जया भुजेल', ward: 11, contact: '९८०१०००११' },
-    { name: 'रमेश बोगटी', ward: 12, contact: '९८०१०००१२' },
-    { name: 'सरोज केसी', ward: 13, contact: '९८०१०००१३' },
-    { name: 'अनिता पौडेल', ward: 14, contact: '९८०१०००१४' },
-    { name: 'गोविन्द चौधरी', ward: 15, contact: '९८०१०००१५' },
-    { name: 'सिता चौधरी', ward: 16, contact: '९८०१०००१६' },
-    { name: 'प्रकाश खत्री', ward: 17, contact: '९८०१०००१७' },
-    { name: 'राधा गुरुङ', ward: 18, contact: '९८०१०००१८' },
-    { name: 'दिनेश सापकोटा', ward: 19, contact: '९८०१०००१९' },
+
+  // Sample client reviews - in real app, this would come from admin panel
+  const clientReviews = [
+    {
+      id: 1,
+      name: t("about.reviews.client1.name"),
+      rating: 5,
+      review: t("about.reviews.client1.review"),
+      image: "public/images/Aashu.jpg"
+    },
+    {
+      id: 2,
+      name: t("about.reviews.client2.name"),
+      rating: 5,
+      review: t("about.reviews.client2.review"),
+      image: "public/images/Prabesh.JPG"
+    },
+    {
+      id: 3,
+      name: t("about.reviews.client3.name"),
+      rating: 4,
+      review: t("about.reviews.client3.review"),
+      image: "public/images/Aj.jpg"
+    }
   ];
 
   return (
-    
-    <div className="container mx-auto px-4 py-8">
-      {/* Hero Section */}
-      <div className="text-center mb-12">
-        <section className="py-10 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center mb-8 text-municipal-blue">Leadership Panel</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {leaders.map((leader, index) => (
-              <div
-                  key={index}
-                     className="rounded-xl shadow-md overflow-hidden transform hover:scale-105 transition duration-300 flex flex-col items-center p-6 bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 text-black
-"
-                >
-                  <img
-                    src={leader.image}
-                    alt={leader.name}
-                    className="w-64 h-64 rounded-full object-cover mx-auto mb-4 border-4 border-white"
-                  />
-                  <h3 className="text-3xl font-semibold text-blue-900">{leader.name}</h3>
-                  <p className="text-xl font-semibold">{leader.post}</p>
-                  <p className="text-lg mt-1">📞 {leader.contact}</p>
+    <div className="min-h-screen bg-gray-50">
+      <Navigation />
+      
+      {/* Hero Section with Animations */}
+      <section className="bg-[#006d4e] text-white py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#006d4e] via-[#005a41] to-[#004d37]"></div>
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-20 h-20 bg-white rounded-full animate-pulse"></div>
+          <div className="absolute top-32 right-20 w-16 h-16 bg-white rounded-full animate-pulse delay-1000"></div>
+          <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-white rounded-full animate-pulse delay-2000"></div>
+          <div className="absolute bottom-32 right-1/3 w-8 h-8 bg-white rounded-full animate-pulse delay-3000"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in opacity-0 animation-delay-300">
+            {t("about.title")}
+          </h1>
+          <p className="text-xl md:text-2xl text-green-100 max-w-4xl mx-auto animate-fade-in opacity-0 animation-delay-600">
+            {t("about.subtitle")}
+          </p>
+        </div>
+        
+        {/* Floating Animation Elements */}
+        <div className="absolute top-1/2 left-0 w-4 h-4 bg-green-300 rounded-full animate-bounce opacity-30"></div>
+        <div className="absolute top-1/3 right-0 w-6 h-6 bg-green-200 rounded-full animate-bounce opacity-40 delay-500"></div>
+        <div className="absolute bottom-1/4 left-1/2 w-3 h-3 bg-green-400 rounded-full animate-bounce opacity-50 delay-1000"></div>
+      </section>
+
+      {/* Statistics Section */}
+      <section id="stats-section" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              {t("about.stats.title")}
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              {t("about.stats.subtitle")}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="text-center hover:shadow-lg transition-shadow duration-300 hover-scale">
+              <CardContent className="p-8">
+                <Award className="h-12 w-12 text-[#006d4e] mx-auto mb-4" />
+                <div className="text-4xl font-bold text-gray-900 mb-2">
+                  {experienceCount}+
                 </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  {t("about.stats.experience")}
+                </h3>
+                <p className="text-gray-600">
+                  {t("about.stats.experienceDesc")}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center hover:shadow-lg transition-shadow duration-300 hover-scale">
+              <CardContent className="p-8">
+                <Briefcase className="h-12 w-12 text-[#006d4e] mx-auto mb-4" />
+                <div className="text-4xl font-bold text-gray-900 mb-2">
+                  {projectsCount}+
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  {t("about.stats.projects")}
+                </h3>
+                <p className="text-gray-600">
+                  {t("about.stats.projectsDesc")}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center hover:shadow-lg transition-shadow duration-300 hover-scale">
+              <CardContent className="p-8">
+                <Users className="h-12 w-12 text-[#006d4e] mx-auto mb-4" />
+                <div className="text-4xl font-bold text-gray-900 mb-2">
+                  {clientsCount}+
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  {t("about.stats.clients")}
+                </h3>
+                <p className="text-gray-600">
+                  {t("about.stats.clientsDesc")}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Branches Section */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              {t("about.branches.title")}
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              {t("about.branches.subtitle")}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {branches.map((branch, index) => (
+              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow duration-300 hover-scale">
+                <div className="aspect-video overflow-hidden">
+                  <img
+                    src={branch.image}
+                    alt={branch.name}
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400&h=300&fit=crop";
+                    }}
+                  />
+                </div>
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Building2 className="h-5 w-5 text-[#006d4e]" />
+                    {branch.name}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <MapPin className="h-4 w-4" />
+                    <span className="text-sm">{branch.location}</span>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
       </section>
-      <h3 className="text-2xl font-semibold mt-16 mb-6 text-center text-municipal-blue">
-        वडाध्यक्षहरू
-      </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {wardLeaders.map((leader, index) => (
-          <div
-            key={index}
-            className="rounded-xl shadow-md overflow-hidden transform hover:scale-105 transition duration-300 flex flex-col items-center p-6 bg-gradient-to-r from-white via-gray-100 to-white text-black"
-          >
-            <h3 className="text-lg font-semibold mb-1">{leader.name}</h3>
-            <p className="text-sm">वडा नं. {leader.ward}</p>
-            <p className="text-sm">📞 {leader.contact}</p>
+
+      {/* CEO Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              {t("about.ceo.title")}
+            </h2>
           </div>
-        ))}
-      </div>
 
-        <h1 className={`text-4xl font-bold text-municipal-blue mb-4 ${currentLanguage === 'ne' ? 'nepali' : ''}`}>
-          {t('about')} - {t('city_name')}
-        </h1>
-        <p className="text-xl text-municipal-gray max-w-3xl mx-auto">
-          Biratnagar Metropolitan City is the largest city in Province No. 1 of Nepal and serves as an important commercial and industrial hub in the eastern region.
-        </p>
-      </div>
-
-      {/* Statistics */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        {stats.map((stat, index) => (
-          <div key={index} className="municipal-card p-6 text-center">
-            <div className="w-12 h-12 bg-municipal-blue rounded-full flex items-center justify-center mx-auto mb-4">
-              <stat.icon className="h-6 w-6 text-white" />
-            </div>
-            <h3 className="text-2xl font-bold text-municipal-blue mb-2">{stat.value}</h3>
-            <p className="font-medium text-gray-800 mb-1">{stat.label}</p>
-            <p className="text-sm text-municipal-gray">{stat.description}</p>
+          <div className="max-w-4xl mx-auto">
+            <Card className="overflow-hidden">
+              <CardContent className="p-8">
+                <div className="flex flex-col md:flex-row items-center gap-8">
+                  <div className="flex-shrink-0">
+                    <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-green-200">
+                      <img
+                        src="public/images/CEO.png"
+                        alt={t("about.ceo.name")}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=400&fit=crop";
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex-1 text-center md:text-left">
+                    <div className="flex items-center gap-2 justify-center md:justify-start mb-4">
+                      <User className="h-6 w-6 text-[#006d4e]" />
+                      <h3 className="text-2xl md:text-3xl font-bold text-gray-900">
+                        {t("about.ceo.name")}
+                      </h3>
+                    </div>
+                    <p className="text-lg text-gray-600 leading-relaxed">
+                      {t("about.ceo.description")}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        ))}
-      </div>
-
-      {/* About Content */}
-      <div className="grid lg:grid-cols-2 gap-12 mb-12">
-        <div>
-          <h2 className="text-2xl font-bold text-municipal-blue mb-6">Our Vision</h2>
-          <p className="text-municipal-gray leading-relaxed mb-6">
-            To develop Biratnagar Metropolitan City as a model smart city that provides efficient, 
-            transparent, and citizen-friendly services through digital transformation and sustainable 
-            urban development practices.
-
-          </p>
-          
-          <h2 className="text-2xl font-bold text-municipal-blue mb-6">Our Mission</h2>
-          <p className="text-municipal-gray leading-relaxed">
-            To serve the citizens of Biratnagar with integrity, transparency, and efficiency by 
-            leveraging modern technology and best practices in municipal governance to improve 
-            quality of life and promote sustainable development.
-          </p>
         </div>
+      </section>
 
-        <div>
-          <h2 className="text-2xl font-bold text-municipal-blue mb-6">Key Objectives</h2>
-          <ul className="space-y-4 text-municipal-gray">
-            <li className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-municipal-green rounded-full mt-2 flex-shrink-0"></div>
-              <span>Provide efficient and transparent municipal services to all citizens</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-municipal-green rounded-full mt-2 flex-shrink-0"></div>
-              <span>Implement digital governance solutions for improved service delivery</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-municipal-green rounded-full mt-2 flex-shrink-0"></div>
-              <span>Promote sustainable urban development and environmental conservation</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-municipal-green rounded-full mt-2 flex-shrink-0"></div>
-              <span>Foster economic growth and improve infrastructure development</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-municipal-green rounded-full mt-2 flex-shrink-0"></div>
-              <span>Ensure participatory governance and citizen engagement</span>
-            </li>
-          </ul>
+      {/* Client Reviews Section */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              {t("about.reviews.title")}
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              {t("about.reviews.subtitle")}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {clientReviews.map((review) => (
+              <Card key={review.id} className="hover:shadow-lg transition-shadow duration-300 hover-scale">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <img
+                      src={review.image}
+                      alt={review.name}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                    <div>
+                      <h4 className="font-semibold text-gray-900">{review.name}</h4>
+                      <div className="flex items-center gap-1">
+                        {[...Array(review.rating)].map((_, i) => (
+                          <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-gray-600 italic">"{review.review}"</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
-      
-   </div>
+      <Footer />
+    </div>
   );
 };
 
