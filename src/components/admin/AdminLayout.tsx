@@ -16,7 +16,8 @@ import {
   Menu,
   X,
   Shield,
-  Settings
+  Settings,
+  Home
 } from 'lucide-react';
 
 const AdminLayout: React.FC = () => {
@@ -54,6 +55,7 @@ const AdminLayout: React.FC = () => {
     { path: '/admin/users', icon: Users, label: 'Citizens' },
     { path: '/admin/complaints', icon: MessageSquare, label: 'Complaints' },
     { path: '/admin/service-requests', icon: Settings, label: 'Service Requests' },
+    { path: '/admin/properties', icon: Home, label: 'Properties' },
   ];
 
   return (
