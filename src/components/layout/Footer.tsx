@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
         <div className="grid md:grid-cols-4 gap-8">
           {/* Contact Info */}
           <div>
-            <h3 className={`font-bold text-lg mb-4 ${currentLanguage === 'ne' ? 'nepali' : ''}`}>
+            <h3 className={`font-bold text-lg mb-4 ${currentLanguage === 'np' ? 'nepali' : ''}`}>
               {t('contact')}
             </h3>
             <div className="space-y-3">
@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className={`font-bold text-lg mb-4 ${currentLanguage === 'ne' ? 'nepali' : ''}`}>
+            <h3 className={`font-bold text-lg mb-4 ${currentLanguage === 'np' ? 'nepali' : ''}`}>
               {t('quick_services')}
             </h3>
             <div className="space-y-2">
@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
 
           {/* Office Hours */}
           <div>
-            <h3 className={`font-bold text-lg mb-4 ${currentLanguage === 'ne' ? 'nepali' : ''}`}>
+            <h3 className={`font-bold text-lg mb-4 ${currentLanguage === 'np' ? 'nepali' : ''}`}>
               Office Hours
             </h3>
             <div className="space-y-2">
@@ -81,7 +81,7 @@ const Footer: React.FC = () => {
 
           {/* About */}
           <div>
-            <h3 className={`font-bold text-lg mb-4 ${currentLanguage === 'ne' ? 'nepali' : ''}`}>
+            <h3 className={`font-bold text-lg mb-4 ${currentLanguage === 'np' ? 'nepali' : ''}`}>
               {t('about')}
             </h3>
             <p className="text-sm leading-relaxed">

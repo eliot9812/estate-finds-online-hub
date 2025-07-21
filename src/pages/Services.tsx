@@ -75,7 +75,7 @@ const Services: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className={`text-4xl font-bold text-municipal-blue mb-4 ${currentLanguage === 'ne' ? 'nepali' : ''}`}>
+        <h1 className={`text-4xl font-bold text-municipal-blue mb-4 ${currentLanguage === 'np' ? 'nepali' : ''}`}>
           {t('services')}
         </h1>
         <p className="text-xl text-municipal-gray max-w-3xl mx-auto">

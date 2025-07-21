@@ -2,8 +2,11 @@ import React, { createContext, useContext, useState, useCallback, useEffect, use
 
 interface LanguageContextProps {
   language: 'en' | 'np';
+  currentLanguage: 'en' | 'np';
+  changeLanguage: (lang: 'en' | 'np') => void;
   toggleLanguage: () => void;
   t: (key: string) => string;
+  languages: Array<{ code: 'en' | 'np'; name: string; nativeName: string }>;
 }
 
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
@@ -386,7 +389,7 @@ const translations = {
       sqft: "sq ft",
       callNow: "Call Now",
       phone: "Phone",
-      viewDetails: "View Details", // Added for common
+      viewDetails: "View Details",
     },
   },
   np: {
@@ -619,7 +622,7 @@ const translations = {
         size: "आकार",
         duration: "अवधि",
         status: "स्थिति",
-        viewDetails: "विवरण हेर्नुहोस्" // Added for projects.project
+        viewDetails: "विवरण हेर्नुहोस्"
       },
       noResults: {
         message: "तपाईंको मापदण्ड मिल्ने कुनै परियोजनाहरू फेला परेनन्।",
@@ -766,63 +769,53 @@ const translations = {
       sqft: "वर्ग फिट",
       callNow: "अहिले कल गर्नुहोस्",
       phone: "फोन",
-      viewDetails: "विवरण हेर्नुहोस्", // Added for common
+      viewDetails: "विवरण हेर्नुहोस्",
     },
   },
 };
 
-const LanguageProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<'en' | 'np'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('language') as 'en' | 'np') || 'en';
-    }
-    return 'en';
+    return (localStorage.getItem('language') as 'en' | 'np') || 'en';
   });
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('language', language);
-    }
-  }, [language]);
-
   const toggleLanguage = useCallback(() => {
-    setLanguage((prevLang) => (prevLang === 'en' ? 'np' : 'en'));
+    setLanguage(prev => {
+      const newLang = prev === 'en' ? 'np' : 'en';
+      localStorage.setItem('language', newLang);
+      return newLang;
+    });
+  }, []);
+
+  const changeLanguage = useCallback((lang: 'en' | 'np') => {
+    setLanguage(lang);
+    localStorage.setItem('language', lang);
   }, []);
 
   const t = useCallback((key: string): string => {
-    console.log(`Translation requested for key: ${key}, language: ${language}`);
-    
     const keys = key.split('.');
-    let result: any = translations[language];
+    let value: any = translations[language];
     
     for (const k of keys) {
-      if (result && typeof result === 'object' && k in result) {
-        result = result[k];
-      } else {
-        console.log(`Key not found: ${k} in ${JSON.stringify(Object.keys(result || {}))}`);
-        // Fallback to English if translation is missing
-        let fallbackResult: any = translations['en'];
-        for (const fk of keys) {
-          if (fallbackResult && typeof fallbackResult === 'object' && fk in fallbackResult) {
-            fallbackResult = fallbackResult[fk];
-          } else {
-            console.log(`Fallback key not found: ${fk}`);
-            return key; // Return the key itself if no translation is found
-          }
-        }
-        return fallbackResult;
-      }
+      value = value?.[k];
     }
     
-    console.log(`Translation result: ${result}`);
-    return typeof result === 'string' ? result : key;
+    return typeof value === 'string' ? value : key;
   }, [language]);
+
+  const languages = [
+    { code: 'en' as const, name: 'English', nativeName: 'English' },
+    { code: 'np' as const, name: 'Nepali', nativeName: 'नेपाली' }
+  ];
 
   const contextValue = useMemo(() => ({
     language,
+    currentLanguage: language,
+    changeLanguage,
     toggleLanguage,
     t,
-  }), [language, toggleLanguage, t]);
+    languages
+  }), [language, changeLanguage, toggleLanguage, t]);
 
   return (
     <LanguageContext.Provider value={contextValue}>
@@ -831,12 +824,10 @@ const LanguageProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) =
   );
 };
 
-const useLanguage = () => {
+export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (context === undefined) {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
 };
-
-export { LanguageProvider, useLanguage };

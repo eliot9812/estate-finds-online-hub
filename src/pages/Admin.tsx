@@ -441,7 +441,7 @@ const Admin = () => {
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
           setPropertyImagePreview(reader.result);
-          setNewProperty(prev => ({ ...prev, image: reader.result })); // Set image directly
+          setNewProperty(prev => ({ ...prev, image: reader.result as string }));
         }
       };
       reader.readAsDataURL(file);
@@ -458,7 +458,7 @@ const Admin = () => {
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
           setPendingPropertyImagePreview(reader.result);
-          setNewPendingProperty(prev => ({ ...prev, image: reader.result }));
+          setNewPendingProperty(prev => ({ ...prev, image: reader.result as string }));
         }
       };
       reader.readAsDataURL(file);

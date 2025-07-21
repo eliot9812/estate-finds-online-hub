@@ -123,7 +123,7 @@ const Header: React.FC = () => {
               <Globe className="h-3 w-3 sm:h-4 sm:w-4" />
               <select
                 value={currentLanguage}
-                onChange={(e) => changeLanguage(e.target.value)}
+                onChange={(e) => changeLanguage(e.target.value as 'en' | 'np')}
                 className="bg-transparent border-none text-white text-xs focus:outline-none cursor-pointer"
               >
                 {languages.map((lang) => (
@@ -155,7 +155,7 @@ const Header: React.FC = () => {
                   <img src={logo} alt="City Logo" className="h-full w-full object-contain p-1" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h1 className={`text-sm sm:text-lg lg:text-2xl font-bold text-white truncate ${currentLanguage === 'ne' ? 'nepali' : ''}`}>
+                  <h1 className={`text-sm sm:text-lg lg:text-2xl font-bold text-white truncate ${currentLanguage === 'np' ? 'nepali' : ''}`}>
                     {t('city_name')}
                   </h1>
                   <p className="text-xs sm:text-sm text-white hidden sm:block truncate">Digital Government Services</p>
